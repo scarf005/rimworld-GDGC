@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <SpecialThingFilterDef>
+    <defName>GDGC_AllowMugbGoblinCorpses</defName>
+    <label>allow MUGB goblin/hobgoblin corpses</label>
+    <description>Allow corpses whose inner pawn is an MUGB goblin or hobgoblin xenotype.</description>
+    <parentCategory>CorpsesHumanlike</parentCategory>
+    <allowedByDefault>true</allowedByDefault>
+    <saveKey>GDGC_allowMugbGoblinCorpses</saveKey>
+    <workerClass>GDGC.SpecialThingFilterWorker_MugbGoblinCorpse</workerClass>
+  </SpecialThingFilterDef>
+
+  <SpecialThingFilterDef>
+    <defName>GDGC_AllowOtherHumanlikeCorpses</defName>
+    <label>allow other humanlike corpses</label>
+    <description>Allow humanlike corpses that are not MUGB goblins or hobgoblins, including baseliners and HAR races.</description>
+    <parentCategory>CorpsesHumanlike</parentCategory>
+    <allowedByDefault>true</allowedByDefault>
+    <saveKey>GDGC_allowOtherHumanlikeCorpses</saveKey>
+    <workerClass>GDGC.SpecialThingFilterWorker_OtherHumanlikeCorpse</workerClass>
+  </SpecialThingFilterDef>
+</Defs>

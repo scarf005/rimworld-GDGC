@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+    <Nullable>disable</Nullable>
+    <AssemblyName>GDGC</AssemblyName>
+    <RootNamespace>GDGC</RootNamespace>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <!-- Match the build contract used by the working RimWorld project:
+         STEAM_APPS=/.../steamapps and STEAM_OS=RimWorldLinux_Data. -->
+    <RimWorldManagedDir Condition="'$(RimWorldManagedDir)' == '' and '$(STEAM_APPS)' != '' and '$(STEAM_OS)' != ''">$(STEAM_APPS)/common/RimWorld/$(STEAM_OS)/Managed</RimWorldManagedDir>
+
+    <!-- Put the mod DLL directly where RimWorld 1.6 expects it. -->
+    <OutputPath>../../1.6/Assemblies/</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(RimWorldManagedDir)/Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(RimWorldManagedDir)/UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- Compile against Harmony's reference assembly. Runtime Harmony is supplied
+         by brrainz.harmony, which is already declared in About/About.xml. -->
+    <PackageReference Include="Lib.Harmony.Ref" Version="2.4.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <Target Name="ValidateRimWorldReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="'$(RimWorldManagedDir)' == ''"
+           Text="RimWorldManagedDir is unset. Build with STEAM_APPS and STEAM_OS, as the justfile does." />
+    <Error Condition="!Exists('$(RimWorldManagedDir)/Assembly-CSharp.dll')"
+           Text="Assembly-CSharp.dll not found under $(RimWorldManagedDir). Check rimworld/steam_os in justfile." />
+    <Error Condition="!Exists('$(RimWorldManagedDir)/UnityEngine.CoreModule.dll')"
+           Text="UnityEngine.CoreModule.dll not found under $(RimWorldManagedDir). Check rimworld/steam_os in justfile." />
+  </Target>
+</Project>

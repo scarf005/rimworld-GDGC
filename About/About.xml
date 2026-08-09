@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>Goblins Don't Deserve Geneva Convention</name>
+  <author>Local source draft</author>
+  <packageId>local.goblinsdontdeservegenevaconvention</packageId>
+  <modIconPath>UI/Icons/GDGC_GoblinExceptionalism</modIconPath>
+  <supportedVersions>
+    <li>1.6</li>
+  </supportedVersions>
+  <modDependencies>
+    <li>
+      <packageId>brrainz.harmony</packageId>
+      <displayName>Harmony</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=2009463077</steamWorkshopUrl>
+    </li>
+    <li>
+      <packageId>Ludeon.RimWorld.Ideology</packageId>
+      <displayName>Ideology</displayName>
+    </li>
+    <li>
+      <packageId>Ludeon.RimWorld.Biotech</packageId>
+      <displayName>Biotech</displayName>
+    </li>
+    <li>
+      <packageId>mustard1557.mugb.goblin</packageId>
+      <displayName>MUGB Goblin</displayName>
+      <steamWorkshopUrl>https://steamcommunity.com/sharedfiles/filedetails/?id=3768425355</steamWorkshopUrl>
+    </li>
+  </modDependencies>
+  <loadAfter>
+    <li>brrainz.harmony</li>
+    <li>Ludeon.RimWorld.Ideology</li>
+    <li>Ludeon.RimWorld.Biotech</li>
+    <li>mustard1557.mugb.goblin</li>
+    <li>erdelf.HumanoidAlienRaces</li>
+  </loadAfter>
+  <description>
+Version 0.2.3 source draft.
+
+Adds the Goblin Exceptionalism meme. The included Harmony source is designed to suppress moral mood memories only when both conditions are true: the receiving pawn follows an ideology containing this meme, and the affected victim or food is an MUGB goblin/hobgoblin. Human, baseliner, HAR, Maru, Miho, Ratkin, Dragonian, and other humanlike targets remain governed by their original cannibalism, execution, organ-harvesting, charity, and related precepts.
+
+This archive does not contain a compiled DLL. No global ThoughtDef mood values or MUGB pheromone definitions are modified by XML. It adds instance-aware special corpse filters so MUGB goblin/hobgoblin corpses can be selected separately from other humanlike corpses in bill filters.
+  </description>
+</ModMetaData>

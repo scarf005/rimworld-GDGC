@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <GDGC_AllowMugbGoblinCorpses.label>MUGB 고블린/홉고블린 시체 허용</GDGC_AllowMugbGoblinCorpses.label>
+  <GDGC_AllowMugbGoblinCorpses.description>MUGB 고블린 또는 홉고블린 제노타입의 시체를 허용합니다.</GDGC_AllowMugbGoblinCorpses.description>
+  <GDGC_AllowOtherHumanlikeCorpses.label>그 외 인간형 시체 허용</GDGC_AllowOtherHumanlikeCorpses.label>
+  <GDGC_AllowOtherHumanlikeCorpses.description>베이스라이너와 HAR 종족을 포함하여 MUGB 고블린 또는 홉고블린이 아닌 인간형 시체를 허용합니다.</GDGC_AllowOtherHumanlikeCorpses.description>
+</LanguageData>

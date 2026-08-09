@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <MemeDef MayRequire="Ludeon.RimWorld.Ideology">
+    <defName>GDGC_GoblinExceptionalism</defName>
+    <label>goblin exceptionalism</label>
+    <description>Moral protections remain in force for humans and other humanlike peoples. MUGB goblins and hobgoblins are excluded from those protections.</description>
+    <iconPath>UI/Icons/GDGC_GoblinExceptionalism</iconPath>
+    <impact>2</impact>
+    <randomizationSelectionWeightFactor>0</randomizationSelectionWeightFactor>
+    <generalRules>
+      <rulesStrings>
+        <li>memeAdjective->anti-goblin</li>
+        <li>memeAdjective->goblin-exceptionalist</li>
+        <li>memeCreed->the goblin exception</li>
+        <li>memeCreed->the green exclusion</li>
+        <li>memeConcept->goblin exclusion</li>
+        <li>memeConcept->protected personhood</li>
+        <li>memeLeaderNoun->warden</li>
+      </rulesStrings>
+    </generalRules>
+  </MemeDef>
+</Defs>
