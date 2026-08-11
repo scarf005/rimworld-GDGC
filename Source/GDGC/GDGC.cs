@@ -54,6 +54,7 @@ namespace GDGC
             "KnowPrisonerOrganHarvested",
             "KnowColonistExecuted",
             "KnowPrisonerExecuted",
+            "KnowPrisonerDiedInnocent",
             "ColonistOrganHarvested",
             "PrisonerOrganHarvested"
         };
@@ -62,12 +63,15 @@ namespace GDGC
         {
             "OrganHarvest",
             "HarvestedOrgan",
-            "ButcheredHumanlike",
+            "Butcher",
             "Cannibal",
             "HumanMeat",
             "HumanlikeMeat",
             "Executed",
             "Execution",
+            "InnocentPrisoner",
+            "PrisonerDied",
+            "PrisonerDeath",
             "Tortur",
             "Vivisect",
             "Mutilat",
@@ -148,6 +152,11 @@ namespace GDGC
             return false;
         }
 
+        internal static bool TreatsGoblinAsGuilty(Pawn receiver, Pawn victim)
+        {
+            return HasGoblinExceptionalism(receiver) && IsMugbGoblin(victim) && receiver != victim;
+        }
+
         internal static bool ShouldSuppress(Pawn receiver, ThoughtDef thoughtDef, Pawn victim)
         {
             if (receiver == null || thoughtDef == null || !HasGoblinExceptionalism(receiver))
@@ -161,7 +170,9 @@ namespace GDGC
                 return IsNegativeMoodThought(thoughtDef);
             }
 
-            if (!IsMugbGoblin(victim) || receiver == victim)
+            // Every MUGB goblin/hobgoblin is ideologically guilty to followers of this meme.
+            // Keep this observer-relative instead of changing RimWorld's global guilt tracker.
+            if (!TreatsGoblinAsGuilty(receiver, victim))
             {
                 return false;
             }
@@ -304,12 +315,57 @@ namespace GDGC
                 }
             }
 
-            if (victim == null)
+            // During death/butchery/organ-harvest processing, the action context identifies the
+            // actual victim. Prefer it over TryGainMemory's optional "other pawn" argument, which
+            // can instead be the butcher, executioner, or another participant.
+            Pawn contextualVictim = VictimContext.Current;
+            if (contextualVictim != null)
             {
-                victim = VictimContext.Current;
+                victim = contextualVictim;
             }
 
             return !GoblinExemption.ShouldSuppress(receiver, thoughtDef, victim);
+        }
+    }
+
+    // Corpse.ButcherProducts is an iterator. A normal prefix/postfix only surrounds iterator creation,
+    // while humanlike-butchery memories are generated during enumeration. Keep the goblin victim
+    // context active until the enumeration is disposed.
+    [HarmonyPatch]
+    internal static class Corpse_ButcherProducts_VictimContext_Patch
+    {
+        private static IEnumerable<MethodBase> TargetMethods()
+        {
+            return AccessTools.GetDeclaredMethods(typeof(Corpse))
+                .Where(method => method.Name == "ButcherProducts"
+                    && typeof(IEnumerable<Thing>).IsAssignableFrom(method.ReturnType));
+        }
+
+        private static void Postfix(Corpse __instance, ref IEnumerable<Thing> __result)
+        {
+            Pawn victim = __instance == null ? null : __instance.InnerPawn;
+            if (__result == null || !GoblinExemption.IsMugbGoblin(victim))
+            {
+                return;
+            }
+
+            __result = EnumerateWithVictimContext(__result, victim);
+        }
+
+        private static IEnumerable<Thing> EnumerateWithVictimContext(IEnumerable<Thing> source, Pawn victim)
+        {
+            Pawn state = VictimContext.PushIfGoblin(victim);
+            try
+            {
+                foreach (Thing thing in source)
+                {
+                    yield return thing;
+                }
+            }
+            finally
+            {
+                VictimContext.Pop(state);
+            }
         }
     }
 
@@ -324,7 +380,8 @@ namespace GDGC
         {
             HashSet<MethodBase> patched = new HashSet<MethodBase>();
 
-            PatchNamedMethod(harmony, patched, typeof(Corpse), "ButcherProducts");
+            // Innocent-prisoner/responsibility memories are generated in the death path.
+            PatchNamedMethod(harmony, patched, typeof(Pawn), "Kill");
             PatchNamedMethod(harmony, patched, typeof(ThoughtUtility), "GiveThoughtsForPawnOrganHarvested");
 
             Type executionUtility = AccessTools.TypeByName("RimWorld.ExecutionThoughtsUtility");
@@ -429,6 +486,12 @@ namespace GDGC
 
         private static Pawn ExtractVictim(object instance, object[] args)
         {
+            Pawn directPawn = instance as Pawn;
+            if (directPawn != null && GoblinExemption.IsMugbGoblin(directPawn))
+            {
+                return directPawn;
+            }
+
             Corpse corpse = instance as Corpse;
             if (corpse != null)
             {
