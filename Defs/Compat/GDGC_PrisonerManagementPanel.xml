@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef>
+    <defName>GDGC_MugbGoblinPolicyRace</defName>
+    <label>MUGB goblins</label>
+    <thingClass>Verse.Thing</thingClass>
+    <category>Ethereal</category>
+  </ThingDef>
+</Defs>

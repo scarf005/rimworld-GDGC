@@ -17,6 +17,7 @@ namespace GDGC
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             DynamicVictimContextPatches.Apply(harmony);
             Wce2Compat.Apply(harmony);
+            PrisonerManagementPanelCompat.Apply(harmony);
             Log.Message("[GDGC] Goblin-exception logic loaded. The exemption requires the GDGC meme and an MUGB goblin target.");
         }
     }

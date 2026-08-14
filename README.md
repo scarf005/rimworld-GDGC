@@ -1,4 +1,4 @@
-# Goblins Don't Deserve Geneva Convention 0.2.3
+# Goblins Don't Deserve Geneva Convention 0.2.4
 
 ## 한국어 명칭
 
@@ -32,6 +32,14 @@ MUGB 고블린과 홉고블린은 별도 HAR 종족 `ThingDef`가 아니라 인�
 고블린 시체만 작업 대상으로 삼으려면 `인간 시체`를 허용한 상태에서 `MUGB 고블린/홉고블린 시체 허용`은 켜고 `그 외 인간형 시체 허용`은 끄면 됩니다. 동물 시체도 제외하려면 `동물 시체` 항목을 끕니다.
 
 이 필터는 작업 계획서의 재료 선택 기능이며 `단, 고블린은 제외` 밈 보유 여부와 무관합니다. 밈은 도덕적 무드 면책만 결정합니다.
+
+## Prisoner Management Panel 호환
+
+[Prisoner Management Panel](https://steamcommunity.com/sharedfiles/filedetails/?id=3523828989)이 함께 활성화되면 수술 정책의 종족 선택에 `MUGB 고블린/홉고블린` 통합 항목을 추가합니다.
+
+- MUGB 고블린과 홉고블린 모두 같은 정책의 적용 대상
+- 베이스라이너와 다른 인간 제노타입은 적용 대상에서 제외
+- 수술 부위 선택에는 두 제노타입이 공유하는 인간 신체 구조 사용
 
 ## MUGB 고블린 페르몬 적응
 
@@ -78,4 +86,5 @@ v0.1.0의 전역 XML 패치를 삭제했습니다. 다음 항목을 전역 변�
 2. Ideology / Biotech
 3. HAR 및 종족 모드
 4. MUGB Goblin
-5. Goblins Don't Deserve Geneva Convention
+5. Prisoner Management Panel
+6. Goblins Don't Deserve Geneva Convention

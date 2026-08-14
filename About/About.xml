@@ -32,12 +32,13 @@
     <li>Ludeon.RimWorld.Ideology</li>
     <li>Ludeon.RimWorld.Biotech</li>
     <li>mustard1557.mugb.goblin</li>
+    <li>radio14.PrisonerManagementPanel</li>
     <li>Mersid.WCE2Updated.Core</li>
     <li>Crustypeanut.WCE2.Core</li>
     <li>erdelf.HumanoidAlienRaces</li>
   </loadAfter>
   <description>
-Version 0.2.3 source draft.
+Version 0.2.4 source draft.
 
 Adds the Goblin Exceptionalism meme. The included Harmony source is designed to suppress moral mood memories only when both conditions are true: the receiving pawn follows an ideology containing this meme, and the affected victim or food is an MUGB goblin/hobgoblin. Human, baseliner, HAR, Maru, Miho, Ratkin, Dragonian, and other humanlike targets remain governed by their original cannibalism, execution, organ-harvesting, charity, and related precepts.
 
