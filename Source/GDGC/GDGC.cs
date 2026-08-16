@@ -80,6 +80,8 @@ namespace GDGC
             "InnocentPrisoner",
             "PrisonerDied",
             "PrisonerDeath",
+            // Charity-refusal memories are raised while Pawn.Kill still supplies the goblin context.
+            "CharityRefused",
             "Tortur",
             "Vivisect",
             "Mutilat",
