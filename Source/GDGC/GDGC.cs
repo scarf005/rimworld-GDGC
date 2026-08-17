@@ -46,6 +46,12 @@ namespace GDGC
             "MUGB_AteGoblinMeatAsIngredientCannibal"
         };
 
+        private static readonly HashSet<string> AlienExaltedThoughts = new HashSet<string>
+        {
+            "HAR_AlienRaces_Exalted",
+            "HAR_AlienRaces_Exalted_Social"
+        };
+
         private static readonly HashSet<string> ExplicitMoralThoughts = new HashSet<string>
         {
             "MUGB_PerformedLiveButchery",
@@ -209,6 +215,24 @@ namespace GDGC
             return false;
         }
 
+        internal static bool ShouldSuppressAlienExalted(Pawn receiver, ThoughtDef thoughtDef)
+        {
+            return receiver != null
+                && thoughtDef != null
+                && HasGoblinExceptionalism(receiver)
+                && AlienExaltedThoughts.Contains(thoughtDef.defName)
+                && IsMugbGoblin(receiver);
+        }
+
+        internal static bool ShouldSuppressAlienExaltedSocial(Pawn receiver, ThoughtDef thoughtDef, Pawn otherPawn)
+        {
+            return receiver != null
+                && thoughtDef != null
+                && HasGoblinExceptionalism(receiver)
+                && AlienExaltedThoughts.Contains(thoughtDef.defName)
+                && IsMugbGoblin(otherPawn);
+        }
+
         private static bool IsNegativeMoodThought(ThoughtDef thoughtDef)
         {
             if (thoughtDef.stages == null)
@@ -226,6 +250,30 @@ namespace GDGC
             }
 
             return false;
+        }
+    }
+
+    [HarmonyPatch]
+    internal static class AlienExaltedThought_Patch
+    {
+        [HarmonyPatch(typeof(ThoughtWorker), nameof(ThoughtWorker.CurrentState))]
+        [HarmonyPostfix]
+        private static void CurrentStatePostfix(ThoughtWorker __instance, Pawn p, ref ThoughtState __result)
+        {
+            if (GoblinExemption.ShouldSuppressAlienExalted(p, __instance.def))
+            {
+                __result = ThoughtState.Inactive;
+            }
+        }
+
+        [HarmonyPatch(typeof(ThoughtWorker), nameof(ThoughtWorker.CurrentSocialState))]
+        [HarmonyPostfix]
+        private static void CurrentSocialStatePostfix(ThoughtWorker __instance, Pawn p, Pawn otherPawn, ref ThoughtState __result)
+        {
+            if (GoblinExemption.ShouldSuppressAlienExaltedSocial(p, __instance.def, otherPawn))
+            {
+                __result = ThoughtState.Inactive;
+            }
         }
     }
 
