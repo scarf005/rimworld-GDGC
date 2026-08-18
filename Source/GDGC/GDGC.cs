@@ -6,13 +6,10 @@ using HarmonyLib;
 using RimWorld;
 using Verse;
 
-namespace GDGC
-{
+namespace GDGC {
     [StaticConstructorOnStartup]
-    public static class Bootstrap
-    {
-        static Bootstrap()
-        {
+    public static class Bootstrap {
+        static Bootstrap() {
             Harmony harmony = new Harmony("local.goblinsdontdeservegenevaconvention");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             DynamicVictimContextPatches.Apply(harmony);
@@ -22,8 +19,7 @@ namespace GDGC
         }
     }
 
-    internal static class GoblinExemption
-    {
+    internal static class GoblinExemption {
         internal const string MemeDefName = "GDGC_GoblinExceptionalism";
 
         private static readonly HashSet<string> GoblinXenotypes = new HashSet<string>
@@ -95,25 +91,20 @@ namespace GDGC
             "SoldSlave"
         };
 
-        internal static bool IsMugbGoblin(Pawn pawn)
-        {
-            if (pawn == null || pawn.genes == null)
-            {
+        internal static bool IsMugbGoblin(Pawn pawn) {
+            if (pawn == null || pawn.genes == null) {
                 return false;
             }
 
             var xenotype = pawn.genes.Xenotype;
-            if (xenotype != null && GoblinXenotypes.Contains(xenotype.defName))
-            {
+            if (xenotype != null && GoblinXenotypes.Contains(xenotype.defName)) {
                 return true;
             }
 
             var genes = pawn.genes.GenesListForReading;
-            for (int i = 0; i < genes.Count; i++)
-            {
+            for (int i = 0; i < genes.Count; i++) {
                 Gene gene = genes[i];
-                if (gene != null && gene.Active && gene.def != null && GoblinCoreGenes.Contains(gene.def.defName))
-                {
+                if (gene != null && gene.Active && gene.def != null && GoblinCoreGenes.Contains(gene.def.defName)) {
                     return true;
                 }
             }
@@ -121,45 +112,36 @@ namespace GDGC
             return false;
         }
 
-        internal static bool HasGoblinExceptionalism(Pawn pawn)
-        {
+        internal static bool HasGoblinExceptionalism(Pawn pawn) {
             var ideo = pawn?.Ideo;
-            if (ideo == null)
-            {
+            if (ideo == null) {
                 return false;
             }
 
             // Reflection keeps this source tolerant of minor Ideo API changes.
             var meme = DefDatabase<MemeDef>.GetNamedSilentFail(MemeDefName);
-            if (meme == null)
-            {
+            if (meme == null) {
                 return false;
             }
 
             var hasMeme = AccessTools.Method(typeof(Ideo), "HasMeme", new Type[] { typeof(MemeDef) });
-            if (hasMeme != null)
-            {
+            if (hasMeme != null) {
                 var result = hasMeme.Invoke(ideo, new object[] { meme });
-                if (result is bool v)
-                {
+                if (result is bool v) {
                     return v;
                 }
             }
 
             var memesField = AccessTools.Field(typeof(Ideo), "memes");
-            if (memesField != null)
-            {
-                if (memesField.GetValue(ideo) is IEnumerable<MemeDef> memes && memes.Contains(meme))
-                {
+            if (memesField != null) {
+                if (memesField.GetValue(ideo) is IEnumerable<MemeDef> memes && memes.Contains(meme)) {
                     return true;
                 }
             }
 
             PropertyInfo memesProperty = AccessTools.Property(typeof(Ideo), "MemesListForReading");
-            if (memesProperty != null)
-            {
-                if (memesProperty.GetValue(ideo, null) is IEnumerable<MemeDef> memes && memes.Contains(meme))
-                {
+            if (memesProperty != null) {
+                if (memesProperty.GetValue(ideo, null) is IEnumerable<MemeDef> memes && memes.Contains(meme)) {
                     return true;
                 }
             }
@@ -167,45 +149,36 @@ namespace GDGC
             return false;
         }
 
-        internal static bool TreatsGoblinAsGuilty(Pawn receiver, Pawn victim)
-        {
+        internal static bool TreatsGoblinAsGuilty(Pawn receiver, Pawn victim) {
             return HasGoblinExceptionalism(receiver) && IsMugbGoblin(victim) && receiver != victim;
         }
 
-        internal static bool ShouldSuppress(Pawn receiver, ThoughtDef thoughtDef, Pawn victim)
-        {
-            if (receiver == null || thoughtDef == null || !HasGoblinExceptionalism(receiver))
-            {
+        internal static bool ShouldSuppress(Pawn receiver, ThoughtDef thoughtDef, Pawn victim) {
+            if (receiver == null || thoughtDef == null || !HasGoblinExceptionalism(receiver)) {
                 return false;
             }
 
             // MUGB's four goblin-meat thoughts already encode that the consumed ingredient was goblin meat.
-            if (GoblinFoodThoughts.Contains(thoughtDef.defName))
-            {
+            if (GoblinFoodThoughts.Contains(thoughtDef.defName)) {
                 return IsNegativeMoodThought(thoughtDef);
             }
 
             // Every MUGB goblin/hobgoblin is ideologically guilty to followers of this meme.
             // Keep this observer-relative instead of changing RimWorld's global guilt tracker.
-            if (!TreatsGoblinAsGuilty(receiver, victim))
-            {
+            if (!TreatsGoblinAsGuilty(receiver, victim)) {
                 return false;
             }
 
-            if (!IsNegativeMoodThought(thoughtDef))
-            {
+            if (!IsNegativeMoodThought(thoughtDef)) {
                 return false;
             }
 
-            if (ExplicitMoralThoughts.Contains(thoughtDef.defName))
-            {
+            if (ExplicitMoralThoughts.Contains(thoughtDef.defName)) {
                 return true;
             }
 
-            for (int i = 0; i < MoralNameFragments.Length; i++)
-            {
-                if (thoughtDef.defName.IndexOf(MoralNameFragments[i], StringComparison.OrdinalIgnoreCase) >= 0)
-                {
+            for (int i = 0; i < MoralNameFragments.Length; i++) {
+                if (thoughtDef.defName.IndexOf(MoralNameFragments[i], StringComparison.OrdinalIgnoreCase) >= 0) {
                     return true;
                 }
             }
@@ -213,8 +186,7 @@ namespace GDGC
             return false;
         }
 
-        internal static bool ShouldSuppressAlienExalted(Pawn receiver, ThoughtDef thoughtDef)
-        {
+        internal static bool ShouldSuppressAlienExalted(Pawn receiver, ThoughtDef thoughtDef) {
             return receiver != null
                 && thoughtDef != null
                 && HasGoblinExceptionalism(receiver)
@@ -222,8 +194,7 @@ namespace GDGC
                 && IsMugbGoblin(receiver);
         }
 
-        internal static bool ShouldSuppressAlienExaltedSocial(Pawn receiver, ThoughtDef thoughtDef, Pawn otherPawn)
-        {
+        internal static bool ShouldSuppressAlienExaltedSocial(Pawn receiver, ThoughtDef thoughtDef, Pawn otherPawn) {
             return receiver != null
                 && thoughtDef != null
                 && HasGoblinExceptionalism(receiver)
@@ -231,18 +202,14 @@ namespace GDGC
                 && IsMugbGoblin(otherPawn);
         }
 
-        private static bool IsNegativeMoodThought(ThoughtDef thoughtDef)
-        {
-            if (thoughtDef.stages == null)
-            {
+        private static bool IsNegativeMoodThought(ThoughtDef thoughtDef) {
+            if (thoughtDef.stages == null) {
                 return false;
             }
 
-            for (int i = 0; i < thoughtDef.stages.Count; i++)
-            {
+            for (int i = 0; i < thoughtDef.stages.Count; i++) {
                 ThoughtStage stage = thoughtDef.stages[i];
-                if (stage != null && stage.baseMoodEffect < 0f)
-                {
+                if (stage != null && stage.baseMoodEffect < 0f) {
                     return true;
                 }
             }
@@ -252,24 +219,19 @@ namespace GDGC
     }
 
     [HarmonyPatch]
-    internal static class AlienExaltedThought_Patch
-    {
+    internal static class AlienExaltedThought_Patch {
         [HarmonyPatch(typeof(ThoughtWorker), nameof(ThoughtWorker.CurrentState))]
         [HarmonyPostfix]
-        private static void CurrentStatePostfix(ThoughtWorker __instance, Pawn p, ref ThoughtState __result)
-        {
-            if (GoblinExemption.ShouldSuppressAlienExalted(p, __instance.def))
-            {
+        private static void CurrentStatePostfix(ThoughtWorker __instance, Pawn p, ref ThoughtState __result) {
+            if (GoblinExemption.ShouldSuppressAlienExalted(p, __instance.def)) {
                 __result = ThoughtState.Inactive;
             }
         }
 
         [HarmonyPatch(typeof(ThoughtWorker), nameof(ThoughtWorker.CurrentSocialState))]
         [HarmonyPostfix]
-        private static void CurrentSocialStatePostfix(ThoughtWorker __instance, Pawn p, Pawn otherPawn, ref ThoughtState __result)
-        {
-            if (GoblinExemption.ShouldSuppressAlienExaltedSocial(p, __instance.def, otherPawn))
-            {
+        private static void CurrentSocialStatePostfix(ThoughtWorker __instance, Pawn p, Pawn otherPawn, ref ThoughtState __result) {
+            if (GoblinExemption.ShouldSuppressAlienExaltedSocial(p, __instance.def, otherPawn)) {
                 __result = ThoughtState.Inactive;
             }
         }
@@ -278,46 +240,36 @@ namespace GDGC
     // MUGB goblins are Biotech xenotypes on the vanilla Human ThingDef, so a normal
     // ThingDef/category filter cannot distinguish their corpses from other human corpses.
     // These workers expose the distinction as SpecialThingFilterDefs in the bill UI.
-    public sealed class SpecialThingFilterWorker_MugbGoblinCorpse : SpecialThingFilterWorker
-    {
-        public override bool Matches(Thing thing)
-        {
+    public sealed class SpecialThingFilterWorker_MugbGoblinCorpse : SpecialThingFilterWorker {
+        public override bool Matches(Thing thing) {
             return thing is Corpse corpse && GoblinExemption.IsMugbGoblin(corpse.InnerPawn);
         }
     }
 
-    public sealed class SpecialThingFilterWorker_OtherHumanlikeCorpse : SpecialThingFilterWorker
-    {
-        public override bool Matches(Thing thing)
-        {
+    public sealed class SpecialThingFilterWorker_OtherHumanlikeCorpse : SpecialThingFilterWorker {
+        public override bool Matches(Thing thing) {
             var corpse = thing as Corpse;
             var pawn = corpse?.InnerPawn;
             return pawn != null && pawn.RaceProps != null && pawn.RaceProps.Humanlike && !GoblinExemption.IsMugbGoblin(pawn);
         }
     }
 
-    internal static class VictimContext
-    {
+    internal static class VictimContext {
         [ThreadStatic]
         private static Stack<Pawn> victims;
 
-        internal static Pawn Current
-        {
-            get
-            {
+        internal static Pawn Current {
+            get {
                 return victims != null && victims.Count > 0 ? victims.Peek() : null;
             }
         }
 
-        internal static Pawn PushIfGoblin(Pawn pawn)
-        {
-            if (!GoblinExemption.IsMugbGoblin(pawn))
-            {
+        internal static Pawn PushIfGoblin(Pawn pawn) {
+            if (!GoblinExemption.IsMugbGoblin(pawn)) {
                 return null;
             }
 
-            if (victims == null)
-            {
+            if (victims == null) {
                 victims = new Stack<Pawn>();
             }
 
@@ -325,10 +277,8 @@ namespace GDGC
             return pawn;
         }
 
-        internal static void Pop(Pawn state)
-        {
-            if (state == null || victims == null || victims.Count == 0)
-            {
+        internal static void Pop(Pawn state) {
+            if (state == null || victims == null || victims.Count == 0) {
                 return;
             }
 
@@ -337,36 +287,29 @@ namespace GDGC
     }
 
     [HarmonyPatch]
-    internal static class MemoryThoughtHandler_TryGainMemory_Patch
-    {
-        private static IEnumerable<MethodBase> TargetMethods()
-        {
+    internal static class MemoryThoughtHandler_TryGainMemory_Patch {
+        private static IEnumerable<MethodBase> TargetMethods() {
             return AccessTools.GetDeclaredMethods(typeof(MemoryThoughtHandler)).Where(method => method.Name == "TryGainMemory");
         }
 
-        private static bool Prefix(MemoryThoughtHandler __instance, object[] __args)
-        {
+        private static bool Prefix(MemoryThoughtHandler __instance, object[] __args) {
             Pawn receiver = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
             ThoughtDef thoughtDef = null;
             Pawn victim = null;
 
-            for (int i = 0; i < __args.Length; i++)
-            {
+            for (int i = 0; i < __args.Length; i++) {
                 ThoughtDef suppliedDef = __args[i] as ThoughtDef;
-                if (suppliedDef != null)
-                {
+                if (suppliedDef != null) {
                     thoughtDef = suppliedDef;
                 }
 
                 Thought_Memory suppliedMemory = __args[i] as Thought_Memory;
-                if (suppliedMemory != null)
-                {
+                if (suppliedMemory != null) {
                     thoughtDef = suppliedMemory.def;
                 }
 
                 Pawn suppliedPawn = __args[i] as Pawn;
-                if (suppliedPawn != null && suppliedPawn != receiver)
-                {
+                if (suppliedPawn != null && suppliedPawn != receiver) {
                     victim = suppliedPawn;
                 }
             }
@@ -375,8 +318,7 @@ namespace GDGC
             // actual victim. Prefer it over TryGainMemory's optional "other pawn" argument, which
             // can instead be the butcher, executioner, or another participant.
             Pawn contextualVictim = VictimContext.Current;
-            if (contextualVictim != null)
-            {
+            if (contextualVictim != null) {
                 victim = contextualVictim;
             }
 
@@ -388,52 +330,41 @@ namespace GDGC
     // while humanlike-butchery memories are generated during enumeration. Keep the goblin victim
     // context active until the enumeration is disposed.
     [HarmonyPatch]
-    internal static class Corpse_ButcherProducts_VictimContext_Patch
-    {
-        private static IEnumerable<MethodBase> TargetMethods()
-        {
+    internal static class Corpse_ButcherProducts_VictimContext_Patch {
+        private static IEnumerable<MethodBase> TargetMethods() {
             return AccessTools.GetDeclaredMethods(typeof(Corpse))
                 .Where(method => method.Name == "ButcherProducts"
                     && typeof(IEnumerable<Thing>).IsAssignableFrom(method.ReturnType));
         }
 
-        private static void Postfix(Corpse __instance, ref IEnumerable<Thing> __result)
-        {
+        private static void Postfix(Corpse __instance, ref IEnumerable<Thing> __result) {
             Pawn victim = __instance == null ? null : __instance.InnerPawn;
-            if (__result == null || !GoblinExemption.IsMugbGoblin(victim))
-            {
+            if (__result == null || !GoblinExemption.IsMugbGoblin(victim)) {
                 return;
             }
 
             __result = EnumerateWithVictimContext(__result, victim);
         }
 
-        private static IEnumerable<Thing> EnumerateWithVictimContext(IEnumerable<Thing> source, Pawn victim)
-        {
+        private static IEnumerable<Thing> EnumerateWithVictimContext(IEnumerable<Thing> source, Pawn victim) {
             Pawn state = VictimContext.PushIfGoblin(victim);
-            try
-            {
-                foreach (Thing thing in source)
-                {
+            try {
+                foreach (Thing thing in source) {
                     yield return thing;
                 }
-            }
-            finally
-            {
+            } finally {
                 VictimContext.Pop(state);
             }
         }
     }
 
-    internal static class DynamicVictimContextPatches
-    {
+    internal static class DynamicVictimContextPatches {
         private static readonly HarmonyMethod PrefixMethod = new HarmonyMethod(typeof(DynamicVictimContextPatches), "ContextPrefix");
         private static readonly HarmonyMethod PostfixMethod = new HarmonyMethod(typeof(DynamicVictimContextPatches), "ContextPostfix");
         private static readonly HarmonyMethod FinalizerMethod = new HarmonyMethod(typeof(DynamicVictimContextPatches), "ContextFinalizer");
         private static readonly HarmonyMethod PreserveHumanlikeThoughtsPrefixMethod = new HarmonyMethod(typeof(DynamicVictimContextPatches), "PreserveHumanlikeThoughtsPrefix");
 
-        internal static void Apply(Harmony harmony)
-        {
+        internal static void Apply(Harmony harmony) {
             HashSet<MethodBase> patched = new HashSet<MethodBase>();
 
             // Innocent-prisoner/responsibility memories are generated in the death path.
@@ -455,52 +386,40 @@ namespace GDGC
 
             // Keep ordinary human/HAR cannibalism memories intact for followers of the GDGC meme (KO: "단, 고블린은 제외").
             // MUGB's goblin-specific food memories are suppressed separately above.
-            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                if (!assembly.GetName().Name.StartsWith("MUGB", StringComparison.OrdinalIgnoreCase))
-                {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
+                if (!assembly.GetName().Name.StartsWith("MUGB", StringComparison.OrdinalIgnoreCase)) {
                     continue;
                 }
 
                 Type[] types;
-                try
-                {
+                try {
                     types = assembly.GetTypes();
-                }
-                catch (ReflectionTypeLoadException exception)
-                {
+                } catch (ReflectionTypeLoadException exception) {
                     types = exception.Types.Where(type => type != null).ToArray();
                 }
 
-                for (int i = 0; i < types.Length; i++)
-                {
+                for (int i = 0; i < types.Length; i++) {
                     MethodInfo method = AccessTools.Method(types[i], "RemoveVanillaHumanlikeMeatThoughts");
-                    if (method != null)
-                    {
+                    if (method != null) {
                         harmony.Patch(method, prefix: PreserveHumanlikeThoughtsPrefixMethod);
                     }
                 }
             }
         }
 
-        private static void PatchNamedMethod(Harmony harmony, HashSet<MethodBase> patched, Type type, string methodName)
-        {
-            if (type == null)
-            {
+        private static void PatchNamedMethod(Harmony harmony, HashSet<MethodBase> patched, Type type, string methodName) {
+            if (type == null) {
                 return;
             }
 
             List<MethodInfo> methods = AccessTools.GetDeclaredMethods(type).Where(method => method.Name == methodName).ToList();
-            for (int i = 0; i < methods.Count; i++)
-            {
+            for (int i = 0; i < methods.Count; i++) {
                 PatchContextMethod(harmony, patched, methods[i]);
             }
         }
 
-        private static void PatchMethodsContaining(Harmony harmony, HashSet<MethodBase> patched, Type type, string fragment)
-        {
-            if (type == null)
-            {
+        private static void PatchMethodsContaining(Harmony harmony, HashSet<MethodBase> patched, Type type, string fragment) {
+            if (type == null) {
                 return;
             }
 
@@ -508,84 +427,68 @@ namespace GDGC
                 .Where(method => method.Name.IndexOf(fragment, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
 
-            for (int i = 0; i < methods.Count; i++)
-            {
+            for (int i = 0; i < methods.Count; i++) {
                 PatchContextMethod(harmony, patched, methods[i]);
             }
         }
 
-        private static void PatchContextMethod(Harmony harmony, HashSet<MethodBase> patched, MethodBase method)
-        {
-            if (method == null || !patched.Add(method))
-            {
+        private static void PatchContextMethod(Harmony harmony, HashSet<MethodBase> patched, MethodBase method) {
+            if (method == null || !patched.Add(method)) {
                 return;
             }
 
             harmony.Patch(method, prefix: PrefixMethod, postfix: PostfixMethod, finalizer: FinalizerMethod);
         }
 
-        private static void ContextPrefix(object __instance, object[] __args, ref Pawn __state)
-        {
+        private static void ContextPrefix(object __instance, object[] __args, ref Pawn __state) {
             Pawn victim = ExtractVictim(__instance, __args);
             __state = VictimContext.PushIfGoblin(victim);
         }
 
-        private static void ContextPostfix(Pawn __state)
-        {
+        private static void ContextPostfix(Pawn __state) {
             VictimContext.Pop(__state);
         }
 
-        private static Exception ContextFinalizer(Exception __exception, Pawn __state)
-        {
+        private static Exception ContextFinalizer(Exception __exception, Pawn __state) {
             // Harmony normally runs postfixes on successful completion. The finalizer clears context after exceptions.
-            if (__exception != null)
-            {
+            if (__exception != null) {
                 VictimContext.Pop(__state);
             }
 
             return __exception;
         }
 
-        private static Pawn ExtractVictim(object instance, object[] args)
-        {
+        private static Pawn ExtractVictim(object instance, object[] args) {
             Pawn directPawn = instance as Pawn;
-            if (directPawn != null && GoblinExemption.IsMugbGoblin(directPawn))
-            {
+            if (directPawn != null && GoblinExemption.IsMugbGoblin(directPawn)) {
                 return directPawn;
             }
 
             Corpse corpse = instance as Corpse;
-            if (corpse != null)
-            {
+            if (corpse != null) {
                 return corpse.InnerPawn;
             }
 
-            if (instance != null && instance.GetType().Name == "Tradeable_Pawn")
-            {
+            if (instance != null && instance.GetType().Name == "Tradeable_Pawn") {
                 FieldInfo thingsColonyField = AccessTools.Field(instance.GetType(), "thingsColony");
                 IEnumerable<Thing> thingsColony = thingsColonyField == null
                     ? null
                     : thingsColonyField.GetValue(instance) as IEnumerable<Thing>;
                 Pawn tradedPawn = thingsColony == null ? null : thingsColony.OfType<Pawn>().FirstOrDefault();
-                if (tradedPawn != null)
-                {
+                if (tradedPawn != null) {
                     return tradedPawn;
                 }
             }
 
-            if (args != null)
-            {
-                for (int i = 0; i < args.Length; i++)
-                {
+            if (args != null) {
+                for (int i = 0; i < args.Length; i++) {
                     Pawn pawn = args[i] as Pawn;
-                    if (pawn != null && GoblinExemption.IsMugbGoblin(pawn))
-                    {
+                    if (pawn != null && GoblinExemption.IsMugbGoblin(pawn)) {
                         return pawn;
                     }
 
                     Corpse suppliedCorpse = args[i] as Corpse;
-                    if (suppliedCorpse != null && GoblinExemption.IsMugbGoblin(suppliedCorpse.InnerPawn))
-                    {
+                    if (suppliedCorpse != null && GoblinExemption.IsMugbGoblin(suppliedCorpse.InnerPawn)) {
                         return suppliedCorpse.InnerPawn;
                     }
                 }
@@ -594,37 +497,29 @@ namespace GDGC
             return null;
         }
 
-        private static bool PreserveHumanlikeThoughtsPrefix(object __instance, object[] __args)
-        {
+        private static bool PreserveHumanlikeThoughtsPrefix(object __instance, object[] __args) {
             Pawn pawn = ExtractAnyPawn(__instance, __args);
             return !GoblinExemption.HasGoblinExceptionalism(pawn);
         }
 
-        private static Pawn ExtractAnyPawn(object instance, object[] args)
-        {
+        private static Pawn ExtractAnyPawn(object instance, object[] args) {
             Pawn directPawn = instance as Pawn;
-            if (directPawn != null)
-            {
+            if (directPawn != null) {
                 return directPawn;
             }
 
-            if (args != null)
-            {
-                for (int i = 0; i < args.Length; i++)
-                {
+            if (args != null) {
+                for (int i = 0; i < args.Length; i++) {
                     Pawn pawn = args[i] as Pawn;
-                    if (pawn != null)
-                    {
+                    if (pawn != null) {
                         return pawn;
                     }
                 }
             }
 
-            if (instance != null)
-            {
+            if (instance != null) {
                 FieldInfo pawnField = AccessTools.Field(instance.GetType(), "pawn");
-                if (pawnField != null)
-                {
+                if (pawnField != null) {
                     return pawnField.GetValue(instance) as Pawn;
                 }
             }
@@ -635,8 +530,7 @@ namespace GDGC
 
     // Optional War Crimes Expanded 2 compatibility. No WCE2 assembly reference is required:
     // the helper and MUGB recipe are resolved at runtime when both mods are active.
-    internal static class Wce2Compat
-    {
+    internal static class Wce2Compat {
         private const string TortureHelperTypeName = "WarCrimesExpanded2.WCE2_ThoughtHelper";
         private const string TortureHelperMethodName = "WCE2_GiveThoughtsForPawnTortured";
         private const string FleshExtractionRecipeTypeName = "MUGB.Recipe_ExtractFleshChunks";
@@ -647,12 +541,10 @@ namespace GDGC
         private static bool invoking;
         private static bool invocationErrorLogged;
 
-        internal static void Apply(Harmony harmony)
-        {
+        internal static void Apply(Harmony harmony) {
             var tortureHelperType = AccessTools.TypeByName(TortureHelperTypeName);
             var fleshExtractionType = AccessTools.TypeByName(FleshExtractionRecipeTypeName);
-            if (tortureHelperType == null || fleshExtractionType == null)
-            {
+            if (tortureHelperType == null || fleshExtractionType == null) {
                 return;
             }
 
@@ -660,8 +552,7 @@ namespace GDGC
                 tortureHelperType,
                 TortureHelperMethodName,
                 new Type[] { typeof(Pawn), typeof(Pawn) });
-            if (giveTortureThoughts == null)
-            {
+            if (giveTortureThoughts == null) {
                 Log.Warning("[GDGC] WCE2 was found, but WCE2_GiveThoughtsForPawnTortured(Pawn, Pawn) was not found. Flesh extraction torture compatibility is disabled.");
                 return;
             }
@@ -669,44 +560,36 @@ namespace GDGC
             var methods = AccessTools.GetDeclaredMethods(fleshExtractionType)
                 .Where(method => method.Name == "ApplyOnPawn")
                 .ToList();
-            if (methods.Count == 0)
-            {
+            if (methods.Count == 0) {
                 MethodInfo inheritedMethod = AccessTools.Method(fleshExtractionType, "ApplyOnPawn");
-                if (inheritedMethod != null)
-                {
+                if (inheritedMethod != null) {
                     methods.Add(inheritedMethod);
                 }
             }
 
             var postfix = new HarmonyMethod(typeof(Wce2Compat), "FleshExtractionPostfix");
-            for (int i = 0; i < methods.Count; i++)
-            {
+            for (int i = 0; i < methods.Count; i++) {
                 harmony.Patch(methods[i], postfix: postfix);
             }
 
-            if (methods.Count > 0)
-            {
+            if (methods.Count > 0) {
                 Log.Message("[GDGC] WCE2 compatibility loaded: MUGB flesh extraction counts as torture.");
             }
         }
 
-        private static void FleshExtractionPostfix(MethodBase __originalMethod, object[] __args)
-        {
-            if (invoking || giveTortureThoughts == null)
-            {
+        private static void FleshExtractionPostfix(MethodBase __originalMethod, object[] __args) {
+            if (invoking || giveTortureThoughts == null) {
                 return;
             }
 
             ExtractSurgeryPawns(__originalMethod, __args, out Pawn victim, out Pawn torturer);
-            if (victim == null)
-            {
+            if (victim == null) {
                 return;
             }
 
             var state = VictimContext.PushIfGoblin(victim);
             invoking = true;
-            try
-            {
+            try {
                 // Make MUGB_ExtractFleshChunks use WCE2's own torture-thought pipeline.
                 // Non-goblins therefore keep WCE2's normal innocence/guilt result.
                 giveTortureThoughts.Invoke(null, new object[] { victim, torturer });
@@ -714,59 +597,45 @@ namespace GDGC
                 // The GDGC meme treats every MUGB goblin as guilty for that believer only.
                 // Do not mutate Pawn_GuiltTracker because that would affect non-believers.
                 if (GoblinExemption.TreatsGoblinAsGuilty(torturer, victim)
-                    && !IsActuallyGuilty(victim))
-                {
+                    && !IsActuallyGuilty(victim)) {
                     GiveRespectedGuiltyDoerThought(torturer);
                 }
-            }
-            catch (Exception exception)
-            {
-                if (!invocationErrorLogged)
-                {
+            } catch (Exception exception) {
+                if (!invocationErrorLogged) {
                     invocationErrorLogged = true;
                     Exception actual = exception is TargetInvocationException && exception.InnerException != null
                         ? exception.InnerException
                         : exception;
                     Log.Error("[GDGC] WCE2 flesh-extraction compatibility failed: " + actual);
                 }
-            }
-            finally
-            {
+            } finally {
                 invoking = false;
                 VictimContext.Pop(state);
             }
         }
 
-        private static void ExtractSurgeryPawns(MethodBase method, object[] args, out Pawn victim, out Pawn torturer)
-        {
+        private static void ExtractSurgeryPawns(MethodBase method, object[] args, out Pawn victim, out Pawn torturer) {
             victim = null;
             torturer = null;
-            if (args == null)
-            {
+            if (args == null) {
                 return;
             }
 
             var parameters = method?.GetParameters();
-            if (parameters != null && parameters.Length == args.Length)
-            {
-                for (int i = 0; i < args.Length; i++)
-                {
+            if (parameters != null && parameters.Length == args.Length) {
+                for (int i = 0; i < args.Length; i++) {
                     var pawn = args[i] as Pawn;
-                    if (pawn == null)
-                    {
+                    if (pawn == null) {
                         continue;
                     }
 
                     string parameterName = parameters[i].Name ?? string.Empty;
                     if (parameterName.IndexOf("victim", StringComparison.OrdinalIgnoreCase) >= 0
-                        || parameterName.IndexOf("patient", StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
+                        || parameterName.IndexOf("patient", StringComparison.OrdinalIgnoreCase) >= 0) {
                         victim = pawn;
-                    }
-                    else if (parameterName.IndexOf("torturer", StringComparison.OrdinalIgnoreCase) >= 0
-                        || parameterName.IndexOf("surgeon", StringComparison.OrdinalIgnoreCase) >= 0
-                        || parameterName.IndexOf("doctor", StringComparison.OrdinalIgnoreCase) >= 0)
-                    {
+                    } else if (parameterName.IndexOf("torturer", StringComparison.OrdinalIgnoreCase) >= 0
+                          || parameterName.IndexOf("surgeon", StringComparison.OrdinalIgnoreCase) >= 0
+                          || parameterName.IndexOf("doctor", StringComparison.OrdinalIgnoreCase) >= 0) {
                         torturer = pawn;
                     }
                 }
@@ -774,42 +643,33 @@ namespace GDGC
 
             // RimWorld surgery workers conventionally pass victim first and surgeon/torturer second.
             // Use that ordering if parameter names were stripped or changed.
-            for (int i = 0; i < args.Length && (victim == null || torturer == null); i++)
-            {
+            for (int i = 0; i < args.Length && (victim == null || torturer == null); i++) {
                 Pawn pawn = args[i] as Pawn;
-                if (pawn == null)
-                {
+                if (pawn == null) {
                     continue;
                 }
 
-                if (victim == null)
-                {
+                if (victim == null) {
                     victim = pawn;
-                }
-                else if (torturer == null && pawn != victim)
-                {
+                } else if (torturer == null && pawn != victim) {
                     torturer = pawn;
                 }
             }
         }
 
-        private static void GiveRespectedGuiltyDoerThought(Pawn torturer)
-        {
-            if (torturer == null || torturer.Ideo == null || torturer.needs == null || torturer.needs.mood == null)
-            {
+        private static void GiveRespectedGuiltyDoerThought(Pawn torturer) {
+            if (torturer == null || torturer.Ideo == null || torturer.needs == null || torturer.needs.mood == null) {
                 return;
             }
 
             var preceptDef = DefDatabase<PreceptDef>.GetNamedSilentFail(RespectedGuiltyPreceptDefName);
             var thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail(RespectedGuiltyDoerThoughtDefName);
-            if (preceptDef == null || thoughtDef == null)
-            {
+            if (preceptDef == null || thoughtDef == null) {
                 return;
             }
 
             var precept = FindPrecept(torturer.Ideo, preceptDef);
-            if (precept == null)
-            {
+            if (precept == null) {
                 return;
             }
 
@@ -817,38 +677,31 @@ namespace GDGC
             torturer.needs.mood.thoughts.memories.TryGainMemory(memory);
         }
 
-        private static Precept FindPrecept(Ideo ideo, PreceptDef def)
-        {
+        private static Precept FindPrecept(Ideo ideo, PreceptDef def) {
             var getPrecept = AccessTools.Method(typeof(Ideo), "GetPrecept", new Type[] { typeof(PreceptDef) });
-            if (getPrecept != null)
-            {
-                if (getPrecept.Invoke(ideo, new object[] { def }) is Precept result)
-                {
+            if (getPrecept != null) {
+                if (getPrecept.Invoke(ideo, new object[] { def }) is Precept result) {
                     return result;
                 }
             }
 
             var property = AccessTools.Property(typeof(Ideo), "PreceptsListForReading");
             var precepts = property == null ? null : property.GetValue(ideo, null) as IEnumerable<Precept>;
-            if (precepts == null)
-            {
+            if (precepts == null) {
                 return null;
             }
 
             var defField = AccessTools.Field(typeof(Precept), "def");
             var defProperty = AccessTools.Property(typeof(Precept), "def");
-            foreach (Precept precept in precepts)
-            {
-                if (precept == null)
-                {
+            foreach (Precept precept in precepts) {
+                if (precept == null) {
                     continue;
                 }
 
                 object preceptDef = defField != null
                     ? defField.GetValue(precept)
                     : (defProperty?.GetValue(precept, null));
-                if (ReferenceEquals(preceptDef, def))
-                {
+                if (ReferenceEquals(preceptDef, def)) {
                     return precept;
                 }
             }
@@ -856,36 +709,28 @@ namespace GDGC
             return null;
         }
 
-        private static bool IsActuallyGuilty(Pawn pawn)
-        {
-            if (pawn == null)
-            {
+        private static bool IsActuallyGuilty(Pawn pawn) {
+            if (pawn == null) {
                 return false;
             }
 
             object guiltTracker = null;
             var guiltField = AccessTools.Field(typeof(Pawn), "guilt");
-            if (guiltField != null)
-            {
+            if (guiltField != null) {
                 guiltTracker = guiltField.GetValue(pawn);
-            }
-            else
-            {
+            } else {
                 var guiltProperty = AccessTools.Property(typeof(Pawn), "guilt");
-                if (guiltProperty != null)
-                {
+                if (guiltProperty != null) {
                     guiltTracker = guiltProperty.GetValue(pawn, null);
                 }
             }
 
-            if (guiltTracker == null)
-            {
+            if (guiltTracker == null) {
                 return false;
             }
 
             var guiltyProperty = AccessTools.Property(guiltTracker.GetType(), "IsGuilty");
-            if (guiltyProperty == null)
-            {
+            if (guiltyProperty == null) {
                 return false;
             }
 

@@ -9,6 +9,8 @@ assembly := "1.6/Assemblies/GDGC.dll"
 
 # Format C# source
 fmt:
+    STEAM_APPS="{{rimworld}}/../.." \
+    STEAM_OS="{{steam_os}}" \
     mise exec dotnet@8.0.422 -- dotnet format ./{{project}}
 
 # Build the C# mod
