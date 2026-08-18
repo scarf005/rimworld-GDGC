@@ -102,13 +102,13 @@ namespace GDGC
                 return false;
             }
 
-            XenotypeDef xenotype = pawn.genes.Xenotype;
+            var xenotype = pawn.genes.Xenotype;
             if (xenotype != null && GoblinXenotypes.Contains(xenotype.defName))
             {
                 return true;
             }
 
-            List<Gene> genes = pawn.genes.GenesListForReading;
+            var genes = pawn.genes.GenesListForReading;
             for (int i = 0; i < genes.Count; i++)
             {
                 Gene gene = genes[i];
@@ -123,34 +123,33 @@ namespace GDGC
 
         internal static bool HasGoblinExceptionalism(Pawn pawn)
         {
-            Ideo ideo = pawn == null ? null : pawn.Ideo;
+            var ideo = pawn?.Ideo;
             if (ideo == null)
             {
                 return false;
             }
 
             // Reflection keeps this source tolerant of minor Ideo API changes.
-            MemeDef meme = DefDatabase<MemeDef>.GetNamedSilentFail(MemeDefName);
+            var meme = DefDatabase<MemeDef>.GetNamedSilentFail(MemeDefName);
             if (meme == null)
             {
                 return false;
             }
 
-            MethodInfo hasMeme = AccessTools.Method(typeof(Ideo), "HasMeme", new Type[] { typeof(MemeDef) });
+            var hasMeme = AccessTools.Method(typeof(Ideo), "HasMeme", new Type[] { typeof(MemeDef) });
             if (hasMeme != null)
             {
-                object result = hasMeme.Invoke(ideo, new object[] { meme });
-                if (result is bool)
+                var result = hasMeme.Invoke(ideo, new object[] { meme });
+                if (result is bool v)
                 {
-                    return (bool)result;
+                    return v;
                 }
             }
 
-            FieldInfo memesField = AccessTools.Field(typeof(Ideo), "memes");
+            var memesField = AccessTools.Field(typeof(Ideo), "memes");
             if (memesField != null)
             {
-                IEnumerable<MemeDef> memes = memesField.GetValue(ideo) as IEnumerable<MemeDef>;
-                if (memes != null && memes.Contains(meme))
+                if (memesField.GetValue(ideo) is IEnumerable<MemeDef> memes && memes.Contains(meme))
                 {
                     return true;
                 }
@@ -159,8 +158,7 @@ namespace GDGC
             PropertyInfo memesProperty = AccessTools.Property(typeof(Ideo), "MemesListForReading");
             if (memesProperty != null)
             {
-                IEnumerable<MemeDef> memes = memesProperty.GetValue(ideo, null) as IEnumerable<MemeDef>;
-                if (memes != null && memes.Contains(meme))
+                if (memesProperty.GetValue(ideo, null) is IEnumerable<MemeDef> memes && memes.Contains(meme))
                 {
                     return true;
                 }
@@ -284,8 +282,7 @@ namespace GDGC
     {
         public override bool Matches(Thing thing)
         {
-            Corpse corpse = thing as Corpse;
-            return corpse != null && GoblinExemption.IsMugbGoblin(corpse.InnerPawn);
+            return thing is Corpse corpse && GoblinExemption.IsMugbGoblin(corpse.InnerPawn);
         }
     }
 
@@ -293,8 +290,8 @@ namespace GDGC
     {
         public override bool Matches(Thing thing)
         {
-            Corpse corpse = thing as Corpse;
-            Pawn pawn = corpse == null ? null : corpse.InnerPawn;
+            var corpse = thing as Corpse;
+            var pawn = corpse?.InnerPawn;
             return pawn != null && pawn.RaceProps != null && pawn.RaceProps.Humanlike && !GoblinExemption.IsMugbGoblin(pawn);
         }
     }
@@ -652,8 +649,8 @@ namespace GDGC
 
         internal static void Apply(Harmony harmony)
         {
-            Type tortureHelperType = AccessTools.TypeByName(TortureHelperTypeName);
-            Type fleshExtractionType = AccessTools.TypeByName(FleshExtractionRecipeTypeName);
+            var tortureHelperType = AccessTools.TypeByName(TortureHelperTypeName);
+            var fleshExtractionType = AccessTools.TypeByName(FleshExtractionRecipeTypeName);
             if (tortureHelperType == null || fleshExtractionType == null)
             {
                 return;
@@ -669,7 +666,7 @@ namespace GDGC
                 return;
             }
 
-            List<MethodInfo> methods = AccessTools.GetDeclaredMethods(fleshExtractionType)
+            var methods = AccessTools.GetDeclaredMethods(fleshExtractionType)
                 .Where(method => method.Name == "ApplyOnPawn")
                 .ToList();
             if (methods.Count == 0)
@@ -681,7 +678,7 @@ namespace GDGC
                 }
             }
 
-            HarmonyMethod postfix = new HarmonyMethod(typeof(Wce2Compat), "FleshExtractionPostfix");
+            var postfix = new HarmonyMethod(typeof(Wce2Compat), "FleshExtractionPostfix");
             for (int i = 0; i < methods.Count; i++)
             {
                 harmony.Patch(methods[i], postfix: postfix);
@@ -700,15 +697,13 @@ namespace GDGC
                 return;
             }
 
-            Pawn victim;
-            Pawn torturer;
-            ExtractSurgeryPawns(__originalMethod, __args, out victim, out torturer);
+            ExtractSurgeryPawns(__originalMethod, __args, out Pawn victim, out Pawn torturer);
             if (victim == null)
             {
                 return;
             }
 
-            Pawn state = VictimContext.PushIfGoblin(victim);
+            var state = VictimContext.PushIfGoblin(victim);
             invoking = true;
             try
             {
@@ -751,12 +746,12 @@ namespace GDGC
                 return;
             }
 
-            ParameterInfo[] parameters = method == null ? null : method.GetParameters();
+            var parameters = method?.GetParameters();
             if (parameters != null && parameters.Length == args.Length)
             {
                 for (int i = 0; i < args.Length; i++)
                 {
-                    Pawn pawn = args[i] as Pawn;
+                    var pawn = args[i] as Pawn;
                     if (pawn == null)
                     {
                         continue;
@@ -805,44 +800,43 @@ namespace GDGC
                 return;
             }
 
-            PreceptDef preceptDef = DefDatabase<PreceptDef>.GetNamedSilentFail(RespectedGuiltyPreceptDefName);
-            ThoughtDef thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail(RespectedGuiltyDoerThoughtDefName);
+            var preceptDef = DefDatabase<PreceptDef>.GetNamedSilentFail(RespectedGuiltyPreceptDefName);
+            var thoughtDef = DefDatabase<ThoughtDef>.GetNamedSilentFail(RespectedGuiltyDoerThoughtDefName);
             if (preceptDef == null || thoughtDef == null)
             {
                 return;
             }
 
-            Precept precept = FindPrecept(torturer.Ideo, preceptDef);
+            var precept = FindPrecept(torturer.Ideo, preceptDef);
             if (precept == null)
             {
                 return;
             }
 
-            Thought_Memory memory = ThoughtMaker.MakeThought(thoughtDef, precept);
+            var memory = ThoughtMaker.MakeThought(thoughtDef, precept);
             torturer.needs.mood.thoughts.memories.TryGainMemory(memory);
         }
 
         private static Precept FindPrecept(Ideo ideo, PreceptDef def)
         {
-            MethodInfo getPrecept = AccessTools.Method(typeof(Ideo), "GetPrecept", new Type[] { typeof(PreceptDef) });
+            var getPrecept = AccessTools.Method(typeof(Ideo), "GetPrecept", new Type[] { typeof(PreceptDef) });
             if (getPrecept != null)
             {
-                Precept result = getPrecept.Invoke(ideo, new object[] { def }) as Precept;
-                if (result != null)
+                if (getPrecept.Invoke(ideo, new object[] { def }) is Precept result)
                 {
                     return result;
                 }
             }
 
-            PropertyInfo property = AccessTools.Property(typeof(Ideo), "PreceptsListForReading");
-            IEnumerable<Precept> precepts = property == null ? null : property.GetValue(ideo, null) as IEnumerable<Precept>;
+            var property = AccessTools.Property(typeof(Ideo), "PreceptsListForReading");
+            var precepts = property == null ? null : property.GetValue(ideo, null) as IEnumerable<Precept>;
             if (precepts == null)
             {
                 return null;
             }
 
-            FieldInfo defField = AccessTools.Field(typeof(Precept), "def");
-            PropertyInfo defProperty = AccessTools.Property(typeof(Precept), "def");
+            var defField = AccessTools.Field(typeof(Precept), "def");
+            var defProperty = AccessTools.Property(typeof(Precept), "def");
             foreach (Precept precept in precepts)
             {
                 if (precept == null)
@@ -852,7 +846,7 @@ namespace GDGC
 
                 object preceptDef = defField != null
                     ? defField.GetValue(precept)
-                    : (defProperty == null ? null : defProperty.GetValue(precept, null));
+                    : (defProperty?.GetValue(precept, null));
                 if (ReferenceEquals(preceptDef, def))
                 {
                     return precept;
@@ -870,14 +864,14 @@ namespace GDGC
             }
 
             object guiltTracker = null;
-            FieldInfo guiltField = AccessTools.Field(typeof(Pawn), "guilt");
+            var guiltField = AccessTools.Field(typeof(Pawn), "guilt");
             if (guiltField != null)
             {
                 guiltTracker = guiltField.GetValue(pawn);
             }
             else
             {
-                PropertyInfo guiltProperty = AccessTools.Property(typeof(Pawn), "guilt");
+                var guiltProperty = AccessTools.Property(typeof(Pawn), "guilt");
                 if (guiltProperty != null)
                 {
                     guiltTracker = guiltProperty.GetValue(pawn, null);
@@ -889,14 +883,14 @@ namespace GDGC
                 return false;
             }
 
-            PropertyInfo guiltyProperty = AccessTools.Property(guiltTracker.GetType(), "IsGuilty");
+            var guiltyProperty = AccessTools.Property(guiltTracker.GetType(), "IsGuilty");
             if (guiltyProperty == null)
             {
                 return false;
             }
 
-            object result = guiltyProperty.GetValue(guiltTracker, null);
-            return result is bool && (bool)result;
+            var result = guiltyProperty.GetValue(guiltTracker, null);
+            return result is bool v && v;
         }
     }
 
