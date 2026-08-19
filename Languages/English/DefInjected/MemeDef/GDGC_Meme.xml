@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <GDGC_GoblinExceptionalism.label>goblin exceptionalism</GDGC_GoblinExceptionalism.label>
-  <GDGC_GoblinExceptionalism.description>Moral protections apply to humans and other humanlike peoples. MUGB goblins and hobgoblins are excluded.</GDGC_GoblinExceptionalism.description>
+  <GDGC_GoblinExceptionalism.description>Goblins are sinful by their very existence, and 'human' rights are merely a luxury for these cannibals. Turning them into meat should make us feel absolutely nothing.</GDGC_GoblinExceptionalism.description>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.0>memeAdjective-&gt;goblin-hating</GDGC_GoblinExceptionalism.generalRules.rulesStrings.0>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.1>memeAdjective-&gt;anti-goblin</GDGC_GoblinExceptionalism.generalRules.rulesStrings.1>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.2>memeAdjective-&gt;goblin-slaying</GDGC_GoblinExceptionalism.generalRules.rulesStrings.2>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.3>memeCreed-&gt;goblin extermination</GDGC_GoblinExceptionalism.generalRules.rulesStrings.3>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.4>memeCreed-&gt;human rights</GDGC_GoblinExceptionalism.generalRules.rulesStrings.4>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.5>memeCreed-&gt;the green exclusion</GDGC_GoblinExceptionalism.generalRules.rulesStrings.5>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.6>memeConcept-&gt;goblin removal</GDGC_GoblinExceptionalism.generalRules.rulesStrings.6>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.7>memeConcept-&gt;goblin hatred</GDGC_GoblinExceptionalism.generalRules.rulesStrings.7>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.8>memeLeaderNoun-&gt;protector of humanity</GDGC_GoblinExceptionalism.generalRules.rulesStrings.8>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.9>memeLeaderNoun-&gt;goblin exterminator</GDGC_GoblinExceptionalism.generalRules.rulesStrings.9>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.10>memeLeaderNoun-&gt;goblin slayer</GDGC_GoblinExceptionalism.generalRules.rulesStrings.10>
 </LanguageData>

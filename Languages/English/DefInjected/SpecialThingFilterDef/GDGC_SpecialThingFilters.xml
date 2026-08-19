@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
-  <GDGC_AllowMugbGoblinCorpses.label>allow MUGB goblin/hobgoblin corpses</GDGC_AllowMugbGoblinCorpses.label>
-  <GDGC_AllowMugbGoblinCorpses.description>Allow corpses whose inner pawn is an MUGB goblin or hobgoblin xenotype.</GDGC_AllowMugbGoblinCorpses.description>
+  <GDGC_AllowMugbGoblinCorpses.label>allow TynGoblin/hobgoblin corpses</GDGC_AllowMugbGoblinCorpses.label>
+  <GDGC_AllowMugbGoblinCorpses.description>Allow corpses whose inner pawn is a TynGoblin or hobgoblin.</GDGC_AllowMugbGoblinCorpses.description>
   <GDGC_AllowOtherHumanlikeCorpses.label>allow other humanlike corpses</GDGC_AllowOtherHumanlikeCorpses.label>
-  <GDGC_AllowOtherHumanlikeCorpses.description>Allow humanlike corpses that are not MUGB goblins or hobgoblins, including baseliners and HAR races.</GDGC_AllowOtherHumanlikeCorpses.description>
+  <GDGC_AllowOtherHumanlikeCorpses.description>Allow humanlike corpses that are not TynGoblins or hobgoblins.</GDGC_AllowOtherHumanlikeCorpses.description>
 </LanguageData>

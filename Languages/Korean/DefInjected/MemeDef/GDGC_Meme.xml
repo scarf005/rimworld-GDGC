@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <GDGC_GoblinExceptionalism.label>단, 고블린은 제외</GDGC_GoblinExceptionalism.label>
-  <GDGC_GoblinExceptionalism.description>인간과 다른 인간형 종족에는 도덕적 보호가 적용됩니다. MUGB 고블린과 홉고블린은 해당 보호에서 제외됩니다.</GDGC_GoblinExceptionalism.description>
-  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.0>memeAdjective-&gt;고블린 제외</GDGC_GoblinExceptionalism.generalRules.rulesStrings.0>
-  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.1>memeAdjective-&gt;대고블린</GDGC_GoblinExceptionalism.generalRules.rulesStrings.1>
-  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.2>memeCreed-&gt;고블린 예외 조항</GDGC_GoblinExceptionalism.generalRules.rulesStrings.2>
-  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.3>memeCreed-&gt;녹색종 배제 원칙</GDGC_GoblinExceptionalism.generalRules.rulesStrings.3>
-  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.4>memeConcept-&gt;고블린 배제</GDGC_GoblinExceptionalism.generalRules.rulesStrings.4>
-  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.5>memeConcept-&gt;보호 대상</GDGC_GoblinExceptionalism.generalRules.rulesStrings.5>
-  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.6>memeLeaderNoun-&gt;감시관</GDGC_GoblinExceptionalism.generalRules.rulesStrings.6>
+  <GDGC_GoblinExceptionalism.description>고블린은 존재 자체가 죄이며 이 식인종들에게 인권은 사치일 뿐입니다. 고기로 만들어버려도 정말 아무런 느낌이 없을 것 같군요.</GDGC_GoblinExceptionalism.description>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.0>memeAdjective-&gt;혐고블린</GDGC_GoblinExceptionalism.generalRules.rulesStrings.0>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.1>memeAdjective-&gt;반고블린</GDGC_GoblinExceptionalism.generalRules.rulesStrings.1>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.2>memeAdjective-&gt;고블린살해</GDGC_GoblinExceptionalism.generalRules.rulesStrings.2>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.3>memeCreed-&gt;고블린 말살</GDGC_GoblinExceptionalism.generalRules.rulesStrings.3>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.4>memeCreed-&gt;인류권</GDGC_GoblinExceptionalism.generalRules.rulesStrings.4>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.5>memeCreed-&gt;녹색종 배제 원칙</GDGC_GoblinExceptionalism.generalRules.rulesStrings.5>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.6>memeConcept-&gt;고블린 제거</GDGC_GoblinExceptionalism.generalRules.rulesStrings.6>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.7>memeConcept-&gt;고블린 혐오</GDGC_GoblinExceptionalism.generalRules.rulesStrings.7>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.8>memeLeaderNoun-&gt;인류수호자</GDGC_GoblinExceptionalism.generalRules.rulesStrings.8>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.9>memeLeaderNoun-&gt;고블린말살자</GDGC_GoblinExceptionalism.generalRules.rulesStrings.9>
+  <GDGC_GoblinExceptionalism.generalRules.rulesStrings.10>memeLeaderNoun-&gt;고블린살해자</GDGC_GoblinExceptionalism.generalRules.rulesStrings.10>
 </LanguageData>
