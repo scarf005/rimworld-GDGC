@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ModMetaData>
-  <name>Goblins Don't Deserve Geneva Convention</name>
-  <author>Local source draft</author>
-  <packageId>local.goblinsdontdeservegenevaconvention</packageId>
+  <name>[scarf] Goblins Don't Deserve Geneva Conventions</name>
+  <author>scarf</author>
+  <packageId>scarf.goblin.exceptionalism</packageId>
   <modIconPath>UI/Icons/GDGC_GoblinExceptionalism</modIconPath>
   <supportedVersions>
     <li>1.6</li>
@@ -37,11 +37,13 @@
     <li>Crustypeanut.WCE2.Core</li>
     <li>erdelf.HumanoidAlienRaces</li>
   </loadAfter>
-  <description>
-Version 0.2.5 source draft.
+  <description>want to play with cannibal: horrible but don't want to care bout goblins? worry no more! adds precept 'goblin exceptionalism' that lets your pawn butcher goblins alive and feel nothing, or even better, good about it (if you're using war crime expanded 2).
 
-Adds the Goblin Exceptionalism meme. The included Harmony source is designed to suppress moral mood memories only when both conditions are true: the receiving pawn follows an ideology containing this meme, and the affected victim or food is an MUGB goblin/hobgoblin. Human, baseliner, HAR, Maru, Miho, Ratkin, Dragonian, and other humanlike targets remain governed by their original cannibalism, execution, organ-harvesting, charity, and related precepts.
+currently compatible with:
+- War Crimes Expanded 2 Core (Updated)
+- PrisonerManagementPanel(囚犯管理面板)
 
-This archive does not contain a compiled DLL. No global ThoughtDef mood values or MUGB pheromone definitions are modified by XML. It adds instance-aware special corpse filters so MUGB goblin/hobgoblin corpses can be selected separately from other humanlike corpses in bill filters.
-  </description>
+it's obviously vibe coded so use at your own risk (works on my machine™)
+source code: https://github.com/scarf005/rimworld-GDGC
+</description>
 </ModMetaData>
