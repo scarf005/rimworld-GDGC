@@ -15,7 +15,7 @@ namespace GDGC {
             DynamicVictimContextPatches.Apply(harmony);
             Wce2Compat.Apply(harmony);
             PrisonerManagementPanelCompat.Apply(harmony);
-            Log.Message("[GDGC] Goblin-exception logic loaded. The exemption requires the GDGC meme and an MUGB goblin target.");
+            GDGCLog.Message("[GDGC] Goblin-exception logic loaded. The exemption requires the GDGC meme and an MUGB goblin target.");
         }
     }
 
@@ -553,7 +553,7 @@ namespace GDGC {
                 TortureHelperMethodName,
                 new Type[] { typeof(Pawn), typeof(Pawn) });
             if (giveTortureThoughts == null) {
-                Log.Warning("[GDGC] WCE2 was found, but WCE2_GiveThoughtsForPawnTortured(Pawn, Pawn) was not found. Flesh extraction torture compatibility is disabled.");
+                GDGCLog.Warning("[GDGC] WCE2 was found, but WCE2_GiveThoughtsForPawnTortured(Pawn, Pawn) was not found. Flesh extraction torture compatibility is disabled.");
                 return;
             }
 
@@ -573,7 +573,7 @@ namespace GDGC {
             }
 
             if (methods.Count > 0) {
-                Log.Message("[GDGC] WCE2 compatibility loaded: MUGB flesh extraction counts as torture.");
+                GDGCLog.Message("[GDGC] WCE2 compatibility loaded: MUGB flesh extraction counts as torture.");
             }
         }
 
@@ -606,7 +606,7 @@ namespace GDGC {
                     Exception actual = exception is TargetInvocationException && exception.InnerException != null
                         ? exception.InnerException
                         : exception;
-                    Log.Error("[GDGC] WCE2 flesh-extraction compatibility failed: " + actual);
+                    GDGCLog.Error("[GDGC] WCE2 flesh-extraction compatibility failed: " + actual);
                 }
             } finally {
                 invoking = false;

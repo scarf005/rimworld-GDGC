@@ -35,7 +35,7 @@ namespace GDGC {
 
             if (getAllRacesMethod == null || prisonerManagementPanelRaceMatchMethod == null ||
                 setPolicyMethod == null || updatePawnsMethod == null) {
-                Log.Warning("[GDGC] Prisoner Management Panel was found, but its race-selection API is incompatible.");
+                GDGCLog.Warning("[GDGC] Prisoner Management Panel was found, but its race-selection API is incompatible.");
                 return;
             }
 
@@ -44,9 +44,9 @@ namespace GDGC {
                 harmony.Patch(setPolicyMethod, transpiler: transpiler);
                 harmony.Patch(updatePawnsMethod, transpiler: transpiler);
                 harmony.Patch(getAllRacesMethod, postfix: new HarmonyMethod(racesPostfixMethod));
-                Log.Message("[GDGC] Prisoner Management Panel compatibility loaded for MUGB goblins and hobgoblins.");
+                GDGCLog.Message("[GDGC] Prisoner Management Panel compatibility loaded for MUGB goblins and hobgoblins.");
             } catch (Exception exception) {
-                Log.Error($"[GDGC] Failed to patch Prisoner Management Panel: {exception}");
+                GDGCLog.Error($"[GDGC] Failed to patch Prisoner Management Panel: {exception}");
             }
         }
 
