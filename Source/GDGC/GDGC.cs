@@ -13,6 +13,7 @@ namespace GDGC {
             Harmony harmony = new Harmony("local.goblinsdontdeservegenevaconvention");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             DynamicVictimContextPatches.Apply(harmony);
+            GoblinPheromonePreferenceCompat.Apply(harmony);
             Wce2Compat.Apply(harmony);
             PrisonerManagementPanelCompat.Apply(harmony);
             GDGCLog.Message("[GDGC] Goblin-exception logic loaded. The exemption requires the GDGC meme and an MUGB goblin target.");
@@ -525,6 +526,108 @@ namespace GDGC {
             }
 
             return null;
+        }
+    }
+
+    // MUGB tracks repeated goblin-meat consumption as pheromone conditioning, then promotes
+    // it to pheromone adaptation. Followers of this meme never gain either state.
+    internal static class GoblinPheromonePreferenceCompat {
+        private const string PreferenceUtilityTypeName = "MUGB.GoblinPheromonePreferenceUtility";
+        private const string ConditioningCompTypeName = "MUGB.HediffComp_GoblinPheromoneConditioning";
+        private const string ConditioningDefName = "MUGB_GoblinPheromoneConditioning";
+        private const string PreferenceDefName = "MUGB_GoblinPheromonePreference";
+
+        private static readonly HarmonyMethod GainConditioningPrefixMethod = new HarmonyMethod(typeof(GoblinPheromonePreferenceCompat), "GainConditioningPrefix");
+        private static readonly HarmonyMethod ConditioningGainPrefixMethod = new HarmonyMethod(typeof(GoblinPheromonePreferenceCompat), "ConditioningGainPrefix");
+
+        internal static void Apply(Harmony harmony) {
+            var preferenceUtilityType = AccessTools.TypeByName(PreferenceUtilityTypeName);
+            var conditioningCompType = AccessTools.TypeByName(ConditioningCompTypeName);
+            if (preferenceUtilityType == null || conditioningCompType == null) {
+                return;
+            }
+
+            PatchNamedMethods(harmony, preferenceUtilityType, GainConditioningPrefixMethod,
+                "TryGainConditioning", "ForceGainConditioning", "NotifyPreferenceGoblinFoodEaten");
+            PatchNamedMethods(harmony, conditioningCompType, ConditioningGainPrefixMethod,
+                "AddConditioning", "AddForcedConditioning");
+            GDGCLog.Message("[GDGC] MUGB goblin pheromone adaptation is disabled for followers of the GDGC meme.");
+        }
+
+        internal static void RemovePheromoneAdaptation(Pawn pawn) {
+            if (pawn?.health?.hediffSet == null || !GoblinExemption.HasGoblinExceptionalism(pawn)) {
+                return;
+            }
+
+            RemoveHediff(pawn, PreferenceDefName);
+            RemoveHediff(pawn, ConditioningDefName);
+        }
+
+        private static bool GainConditioningPrefix(object[] __args) {
+            var pawn = ExtractPawn(__args);
+            if (!GoblinExemption.HasGoblinExceptionalism(pawn)) {
+                return true;
+            }
+
+            RemovePheromoneAdaptation(pawn);
+            return false;
+        }
+
+        private static bool ConditioningGainPrefix(HediffComp __instance) {
+            var pawn = __instance?.Pawn;
+            if (!GoblinExemption.HasGoblinExceptionalism(pawn)) {
+                return true;
+            }
+
+            RemovePheromoneAdaptation(pawn);
+            return false;
+        }
+
+        private static void PatchNamedMethods(Harmony harmony, Type type, HarmonyMethod prefix, params string[] methodNames) {
+            var methods = AccessTools.GetDeclaredMethods(type);
+            for (var i = 0; i < methods.Count; i++) {
+                var method = methods[i];
+                for (var j = 0; j < methodNames.Length; j++) {
+                    if (method.Name == methodNames[j]) {
+                        harmony.Patch(method, prefix: prefix);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private static Pawn ExtractPawn(object[] args) {
+            if (args == null) {
+                return null;
+            }
+
+            for (var i = 0; i < args.Length; i++) {
+                var pawn = args[i] as Pawn;
+                if (pawn != null) {
+                    return pawn;
+                }
+            }
+
+            return null;
+        }
+
+        private static void RemoveHediff(Pawn pawn, string defName) {
+            var def = DefDatabase<HediffDef>.GetNamedSilentFail(defName);
+            var hediff = def == null ? null : pawn.health.hediffSet.GetFirstHediffOfDef(def);
+            if (hediff != null) {
+                pawn.health.RemoveHediff(hediff);
+            }
+        }
+    }
+
+    // Existing adaptation is a migration concern, not a per-tick condition. GameComponent.LoadedGame
+    // runs after every map and world pawn has finished loading, so this scans each saved pawn once.
+    public sealed class GameComponent_GoblinPheromoneAdaptationCleanup : GameComponent {
+        public override void LoadedGame() {
+            var pawns = PawnsFinder.AllMapsWorldAndTemporary_Alive;
+            for (var i = 0; i < pawns.Count; i++) {
+                GoblinPheromonePreferenceCompat.RemovePheromoneAdaptation(pawns[i]);
+            }
         }
     }
 
