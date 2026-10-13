@@ -383,6 +383,9 @@ internal static class GoblinPheromonePreferenceCompat {
 // Existing adaptation is a migration concern, not a per-tick condition. GameComponent.LoadedGame
 // runs after every map and world pawn has finished loading, so this scans each saved pawn once.
 public sealed class GameComponent_GoblinPheromoneAdaptationCleanup : GameComponent {
+    // RimWorld instantiates game components through a Game constructor.
+    public GameComponent_GoblinPheromoneAdaptationCleanup(Game game) { }
+
     public override void LoadedGame() {
         foreach (var pawn in PawnsFinder.AllMapsWorldAndTemporary_Alive) {
             GoblinPheromonePreferenceCompat.RemovePheromoneAdaptation(pawn);
