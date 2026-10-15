@@ -2,3 +2,4 @@
 *.pdb
 Source/GDGC/obj/**
 *.*~
+Source/obj/
