@@ -34,10 +34,7 @@ install: build
     mkdir -p "{{mod_dest}}/1.6/Assemblies" "{{mod_dest}}/1.7/Assemblies"
     cp 1.6/Assemblies/GDGC.dll "{{mod_dest}}/1.6/Assemblies/"
     cp 1.7/Assemblies/GDGC.dll "{{mod_dest}}/1.7/Assemblies/"
-    cp -r About "{{mod_dest}}/"
-    cp -r Defs "{{mod_dest}}/"
-    cp -r Languages "{{mod_dest}}/"
-    cp -r Textures "{{mod_dest}}/"
+    rsync -a --exclude '*~' About Defs Languages Textures "{{mod_dest}}/"
     @echo "Installed to {{mod_dest}}"
 
 # Install and enable in ModsConfig.xml
